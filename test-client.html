@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>WebSocket Flash Fallback Client</title>
+</head>
+
+<body>
+
+<script type="text/javascript">
+
+if(typeof WebSocket === 'undefined')
+{
+
+	console.log("browser does not support WebSocket natively. Trying the Flash Fallback...");
+
+	//dynamically load the required libraries
+	var swf_ref=document.createElement('script');
+	swf_ref.setAttribute("type", "text/javascript");
+	swf_ref.setAttribute("src", "swfobject.js");
+
+	document.getElementsByTagName("head")[0].appendChild(swf_ref);
+
+	swf_ref.onload = swf_ref.onreadystatechange = function(){
+
+		if( !this.readyState || this.readyState === "loaded" || this.readyState === "complete" )
+		{
+			console.log("swf_ref initialized");
+
+			var web_socket_ref=document.createElement('script');
+			web_socket_ref.setAttribute("type", "text/javascript");
+			web_socket_ref.setAttribute("src", "web_socket.js");
+
+			document.getElementsByTagName("head")[0].appendChild(web_socket_ref);
+
+			web_socket_ref.onload = web_socket_ref.onreadystatechange = function()
+			{
+
+
+				if( !this.readyState || this.readyState === "loaded" || this.readyState === "complete" )
+				{
+					console.log("web_socket_ref initialized");
+					startApp();
+				}
+				
+			}
+		}
+		
+	}
+
+
+	// Set URL of your WebSocketMain.swf here:
+ 	WEB_SOCKET_SWF_LOCATION = "WebSocketMain.swf";
+ 	// Set this to dump debug message from Flash to console.log:
+ 	WEB_SOCKET_DEBUG = true;
+
+}
+else{
+	console.log("Browser supports WebSocket natively");
+
+	startApp();
+
+}
+
+
+function startApp(){
+
+	var socket = new WebSocket("ws://localhost:8080/websocket");
+
+	socket.onopen = function(event) {
+    
+	    console.log("connection opened");
+	};
+
+	socket.onmessage = function(event) {
+	    
+		console.log("received message");
+
+	};
+
+	socket.onclose = function(event) {
+	    console.log("connection closed");
+	};
+
+	socket.onerror=function(event){
+		console.log("an error occured !!!");
+	}
+
+
+}
+
+</script>
+</body>
+</html>
