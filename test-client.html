@@ -2,11 +2,15 @@
 <html>
 <head>
 	<title>WebSocket Flash Fallback Client</title>
+	<script type="text/javascript" src="flash_detect_min.js"></script>
 </head>
 
 <body>
 
 <script type="text/javascript">
+
+
+
 
 if(typeof WebSocket === 'undefined')
 {
@@ -26,23 +30,31 @@ if(typeof WebSocket === 'undefined')
 		{
 			console.log("swf_ref initialized");
 
-			var web_socket_ref=document.createElement('script');
-			web_socket_ref.setAttribute("type", "text/javascript");
-			web_socket_ref.setAttribute("src", "web_socket.js");
-
-			document.getElementsByTagName("head")[0].appendChild(web_socket_ref);
-
-			web_socket_ref.onload = web_socket_ref.onreadystatechange = function()
+			if(FlashDetect.major >= 10)
 			{
+				var web_socket_ref=document.createElement('script');
+				web_socket_ref.setAttribute("type", "text/javascript");
+				web_socket_ref.setAttribute("src", "web_socket.js");
 
+				document.getElementsByTagName("head")[0].appendChild(web_socket_ref);
 
-				if( !this.readyState || this.readyState === "loaded" || this.readyState === "complete" )
+				web_socket_ref.onload = web_socket_ref.onreadystatechange = function()
 				{
-					console.log("web_socket_ref initialized");
-					startApp();
+
+
+					if( !this.readyState || this.readyState === "loaded" || this.readyState === "complete" )
+					{
+						console.log("web_socket_ref initialized");
+						startApp();
+					}
+					
 				}
-				
 			}
+			else
+			{
+				console.log("Flash Player Not supported");
+			}
+					
 		}
 		
 	}

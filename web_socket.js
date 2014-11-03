@@ -30,6 +30,7 @@
     logger.error("Flash Player >= 10.0.0 is required.");
     return;
   }
+  
   if (location.protocol == "file:") {
     logger.error(
       "WARNING: web-socket-js doesn't work in file:///... URL " +
